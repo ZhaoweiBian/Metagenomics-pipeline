@@ -1,0 +1,23 @@
+# 本地项目配置（路径因人而异，勿提交）
+project.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE / 编辑器
+.cursor/
+.vscode/
+*.code-workspace
+
+# 临时 / 系统文件
+*.swp
+*~
+.DS_Store
+
+# 桌面端打包产物（可选，体积大）
+metagenomics_desktop/build/
+metagenomics_desktop/dist/

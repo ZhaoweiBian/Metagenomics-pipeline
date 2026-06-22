@@ -1,0 +1,53 @@
+"""Pipeline 步骤与阶段定义（与 run_pipeline.sh 同步）。"""
+
+PIPELINE_STEPS = [
+    ("0.1", "下载原始数据"),
+    ("0.2", "Fastp 质控"),
+    ("1.1", "宿主去除"),
+    ("2.1", "Kraken2+Bracken 物种注释"),
+    ("2.2", "合并 Bracken 丰度表"),
+    ("3.1", "metaSPAdes 组装"),
+    ("3.2", "Contig 预处理"),
+    ("3.3", "Bowtie2 建索引"),
+    ("3.4", "Reads 比对到 Contig"),
+    ("3.5", "SAM 转 sorted BAM"),
+    ("3.6", "Contig Depth 计算"),
+    ("3.7", "MetaBAT2 Binning"),
+    ("3.8", "CheckM2 质量评估"),
+    ("3.9", "提取高质量 MAG"),
+    ("3.10", "提取中等质量 MAG"),
+    ("4.1", "dRep 去冗余"),
+    ("4.2", "GTDB-Tk HQ/dRep MAG 注释"),
+    ("4.3", "GTDB-Tk 中高质量 MAG 注释"),
+    ("4.4", "CoverM MAG 丰度"),
+    ("5.1", "Contig 基因预测(Prodigal)"),
+    ("5.2", "Contig 合并质量检查"),
+    ("6.1", "蛋白 CD-HIT 去冗余"),
+    ("6.2", "基因 CD-HIT-EST 去冗余"),
+    ("6.3", "提取 NR 蛋白序列"),
+    ("6.4", "Salmon 基因丰度定量"),
+    ("6.5", "Contig 蛋白 eggNOG 注释"),
+    ("6.6", "Contig 注释质量检查"),
+    ("6.7", "Contig KO 功能丰度计算"),
+    ("6.8", "基因注释与丰度合并"),
+    ("6.9", "按 EC 提取目标基因"),
+    ("7.1", "MAG 基因预测"),
+    ("7.2", "MAG eggNOG 注释"),
+    ("7.3", "MAG × KO 丰度矩阵"),
+    ("7.4", "MAG 加权功能丰度"),
+]
+
+PIPELINE_PHASES = [
+    ("download", "数据下载", "0.1"),
+    ("qc", "质控", "0.2"),
+    ("dehost", "去宿主", "1.1"),
+    ("taxonomy", "物种注释", "2.1 2.2"),
+    ("assembly", "组装比对", "3.1–3.6"),
+    ("binning", "Binning", "3.7–3.10"),
+    ("mag", "MAG 去冗余/注释/丰度", "4.1–4.4"),
+    ("contig_function", "Contig 功能", "5.1–6.9"),
+    ("mag_function", "MAG 功能", "7.1–7.4"),
+    ("function", "全部功能分析", "5.1–7.4"),
+]
+
+STEP_IDS = [s[0] for s in PIPELINE_STEPS]
