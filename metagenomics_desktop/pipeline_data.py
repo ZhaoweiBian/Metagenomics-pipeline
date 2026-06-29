@@ -15,11 +15,9 @@ PIPELINE_STEPS = [
     ("3.7", "MetaBAT2 Binning"),
     ("3.8", "CheckM2 质量评估"),
     ("3.9", "提取高质量 MAG"),
-    ("3.10", "提取中等质量 MAG"),
     ("4.1", "dRep 去冗余"),
-    ("4.2", "GTDB-Tk HQ/dRep MAG 注释"),
-    ("4.3", "GTDB-Tk 中高质量 MAG 注释"),
-    ("4.4", "CoverM MAG 丰度"),
+    ("4.2", "GTDB-Tk dRep MAG 注释"),
+    ("4.3", "CoverM dRep MAG 丰度"),
     ("5.1", "Contig 基因预测(Prodigal)"),
     ("5.2", "Contig 合并质量检查"),
     ("6.1", "蛋白 CD-HIT 去冗余"),
@@ -35,6 +33,16 @@ PIPELINE_STEPS = [
     ("7.2", "MAG eggNOG 注释"),
     ("7.3", "MAG × KO 丰度矩阵"),
     ("7.4", "MAG 加权功能丰度"),
+    ("8.1", "Contig 蛋白 dbCAN CAZyme 注释"),
+    ("8.2", "Contig CAZyme 丰度计算"),
+    ("8.3", "dRep MAG dbCAN CAZyme 注释"),
+    ("8.4", "dRep MAG × CAZyme 丰度矩阵"),
+    ("8.5", "dRep MAG 加权 CAZyme 丰度"),
+    ("9.1", "Contig 基因 CARD(RGI) 耐药注释"),
+    ("9.2", "Contig AMR 丰度计算"),
+    ("9.3", "dRep MAG CARD(RGI) 耐药注释"),
+    ("9.4", "dRep MAG × AMR 丰度矩阵"),
+    ("9.5", "dRep MAG 加权 AMR 丰度"),
 ]
 
 PIPELINE_PHASES = [
@@ -43,11 +51,13 @@ PIPELINE_PHASES = [
     ("dehost", "去宿主", "1.1"),
     ("taxonomy", "物种注释", "2.1 2.2"),
     ("assembly", "组装比对", "3.1–3.6"),
-    ("binning", "Binning", "3.7–3.10"),
-    ("mag", "MAG 去冗余/注释/丰度", "4.1–4.4"),
+    ("binning", "Binning", "3.7–3.9"),
+    ("mag", "MAG 去冗余/注释/丰度", "4.1–4.3"),
     ("contig_function", "Contig 功能", "5.1–6.9"),
-    ("mag_function", "MAG 功能", "7.1–7.4"),
-    ("function", "全部功能分析", "5.1–7.4"),
+    ("mag_function", "MAG 功能 (dRep)", "7.1–7.4"),
+    ("function", "全部功能分析", "5.1–9.5"),
+    ("cazyme", "CAZyme (dbCAN)", "8.1–8.5"),
+    ("card", "耐药基因 (CARD/RGI)", "9.1–9.5"),
 ]
 
 STEP_IDS = [s[0] for s in PIPELINE_STEPS]

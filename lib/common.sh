@@ -34,11 +34,9 @@ _apply_gui_project_paths() {
     export BRACKEN_DIR="${root}/bracken"
     export ASSEMBLY_CONTIG_DIR="${root}/assembly/contig"
     export HQ_MAG_DIR="${root}/assembly/high_quality_bins"
-    export MQ_MAG_DIR="${root}/assembly/medium_quality_bins"
     export DREP_OUT_DIR="${root}/assembly/drep/all_bins"
     export DREP_MAG_DIR="${DREP_OUT_DIR}/dereplicated_genomes"
     export GTDBTK_HQ_OUT_DIR="${root}/gtdbtk"
-    export GTDBTK_MQ_OUT_DIR="${root}/gtdbtk_mq"
     export GTDBTK_OUT_DIR="${root}/gtdbtk"
     export COVERM_OUT_DIR="${root}/coverm"
     export CONTIG_FUNCTION_DIR="${root}/contig_function"
@@ -48,6 +46,10 @@ _apply_gui_project_paths() {
     export MAG_ANNOT_DIR="${MAG_FUNCTION_DIR}/function_annotation"
     export MAG_FUNCTION_MATRIX_DIR="${MAG_FUNCTION_DIR}/function_matrix"
     export FUNCTION_MATRIX_DIR="${GENE_QUANT_DIR}/function_matrix"
+    export CONTIG_DBCAN_DIR="${GENE_QUANT_DIR}/protein_function/dbCAN"
+    export CONTIG_CARD_DIR="${GENE_QUANT_DIR}/gene_function/card"
+    export MAG_DBCAN_DIR="${MAG_FUNCTION_DIR}/dbcan_annotation"
+    export MAG_CARD_DIR="${MAG_FUNCTION_DIR}/card_annotation"
 }
 
 # 日志

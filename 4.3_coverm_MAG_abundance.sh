@@ -1,5 +1,5 @@
 #!/bin/bash
-# 4.4 CoverM：dRep MAG 在各样本中的丰度 (TPM / relative abundance)
+# 4.3 CoverM：dRep MAG 在各样本中的丰度 (TPM / relative abundance)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

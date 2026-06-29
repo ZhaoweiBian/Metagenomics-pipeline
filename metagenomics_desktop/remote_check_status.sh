@@ -101,12 +101,6 @@ if [[ "$hq_n" -gt 0 ]]; then
 else
     emit "3.9" "pending" "无 HQ MAG"
 fi
-mq_n=$(count_glob "$PR/assembly/medium_quality_bins/*.fa")
-if [[ "$mq_n" -gt 0 ]]; then
-    emit "3.10" "done" "MQ MAG: ${mq_n}"
-else
-    emit "3.10" "pending" "无 MQ MAG"
-fi
 
 # 4.x
 drep_n=$(count_glob "$PR/assembly/drep/all_bins/dereplicated_genomes/*.fa")
@@ -116,19 +110,14 @@ else
     emit "4.1" "pending" "无 dRep"
 fi
 if [[ -f "$PR/gtdbtk/gtdbtk.bac120.summary.tsv" ]] || [[ -f "$PR/gtdbtk/classify/gtdbtk.bac120.summary.tsv" ]]; then
-    emit "4.2" "done" "GTDB-Tk HQ 完成"
+    emit "4.2" "done" "GTDB-Tk dRep 完成"
 else
-    emit "4.2" "pending" "无 GTDB-Tk HQ"
+    emit "4.2" "pending" "无 GTDB-Tk"
 fi
-if [[ -f "$PR/gtdbtk_mq/gtdbtk.bac120.summary.tsv" ]] || [[ -f "$PR/gtdbtk_mq/classify/gtdbtk.bac120.summary.tsv" ]]; then
-    emit "4.3" "done" "GTDB-Tk MQ 完成"
+if [[ -f "$PR/coverm/MAG_tpm.csv" ]] || [[ -f "$PR/coverm/MAGs_abundance.tsv" ]]; then
+    emit "4.3" "done" "CoverM 丰度完成"
 else
-    emit "4.3" "pending" "无 GTDB-Tk MQ"
-fi
-if [[ -f "$PR/coverm/MAGs_abundance.tsv" ]]; then
-    emit "4.4" "done" "CoverM 丰度完成"
-else
-    emit "4.4" "pending" "无 CoverM"
+    emit "4.3" "pending" "无 CoverM"
 fi
 
 # 5.x
@@ -215,6 +204,68 @@ if [[ -f "$PR/MAG_function/function_matrix/mag_weighted_KO_TPM.tsv" ]]; then
     emit "7.4" "done" "MAG 加权丰度完成"
 else
     emit "7.4" "pending" "无 MAG 加权丰度"
+fi
+
+# 8.x CAZyme
+if [[ -f "$PR/contig_function/gene_quant/protein_function/dbCAN/overview.tsv" ]]; then
+    emit "8.1" "done" "Contig dbCAN 完成"
+else
+    emit "8.1" "pending" "无 Contig dbCAN"
+fi
+if [[ -f "$PR/contig_function/gene_quant/function_matrix/cazyme/cazyme_family.TPM.tsv" ]]; then
+    emit "8.2" "done" "Contig CAZyme 丰度完成"
+else
+    emit "8.2" "pending" "无 Contig CAZyme 丰度"
+fi
+mag_dbcan_n=0
+if [[ -d "$PR/MAG_function/dbcan_annotation" ]]; then
+    mag_dbcan_n=$(find "$PR/MAG_function/dbcan_annotation" -name 'overview.tsv' 2>/dev/null | wc -l)
+fi
+if [[ "$mag_dbcan_n" -gt 0 ]]; then
+    emit "8.3" "done" "dRep MAG dbCAN: ${mag_dbcan_n}"
+else
+    emit "8.3" "pending" "无 dRep MAG dbCAN"
+fi
+if [[ -f "$PR/MAG_function/function_matrix/mag_cazyme_gene_count_matrix.tsv" ]]; then
+    emit "8.4" "done" "MAG×CAZyme 矩阵完成"
+else
+    emit "8.4" "pending" "无 MAG CAZyme 矩阵"
+fi
+if [[ -f "$PR/MAG_function/function_matrix/mag_weighted_cazyme_TPM.tsv" ]]; then
+    emit "8.5" "done" "MAG 加权 CAZyme 完成"
+else
+    emit "8.5" "pending" "无 MAG 加权 CAZyme"
+fi
+
+# 9.x AMR
+if [[ -f "$PR/contig_function/gene_quant/gene_function/card/contig_card.txt" ]]; then
+    emit "9.1" "done" "Contig RGI 完成"
+else
+    emit "9.1" "pending" "无 Contig RGI"
+fi
+if [[ -f "$PR/contig_function/gene_quant/function_matrix/amr/amr_aro.TPM.tsv" ]]; then
+    emit "9.2" "done" "Contig AMR 丰度完成"
+else
+    emit "9.2" "pending" "无 Contig AMR 丰度"
+fi
+mag_card_n=0
+if [[ -d "$PR/MAG_function/card_annotation" ]]; then
+    mag_card_n=$(find "$PR/MAG_function/card_annotation" -name '*_card.txt' 2>/dev/null | wc -l)
+fi
+if [[ "$mag_card_n" -gt 0 ]]; then
+    emit "9.3" "done" "dRep MAG RGI: ${mag_card_n}"
+else
+    emit "9.3" "pending" "无 dRep MAG RGI"
+fi
+if [[ -f "$PR/MAG_function/function_matrix/mag_amr_gene_count_matrix.tsv" ]]; then
+    emit "9.4" "done" "MAG×AMR 矩阵完成"
+else
+    emit "9.4" "pending" "无 MAG AMR 矩阵"
+fi
+if [[ -f "$PR/MAG_function/function_matrix/mag_weighted_amr_TPM.tsv" ]]; then
+    emit "9.5" "done" "MAG 加权 AMR 完成"
+else
+    emit "9.5" "pending" "无 MAG 加权 AMR"
 fi
 
 echo "# samples: ${sample_n}" >&2

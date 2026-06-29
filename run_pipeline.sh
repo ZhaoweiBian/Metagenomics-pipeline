@@ -56,11 +56,9 @@ declare -a PIPELINE_STEPS=(
     "3.7|MetaBAT2 Binning|3.7_binning.sh"
     "3.8|CheckM2 质量评估|3.8_bin_quality_assess.sh"
     "3.9|提取高质量 MAG|3.9_extract_high_quality_bins.sh"
-    "3.10|提取中等质量 MAG|3.10_extract_medium_quality_bins.sh"
     "4.1|dRep 去冗余|4.1_drep.sh"
-    "4.2|GTDB-Tk HQ/dRep MAG 注释|4.2_GTDB_HQ_annotation.sh"
-    "4.3|GTDB-Tk 中高质量 MAG 注释|4.3_GTDB_MQ_annotation.sh"
-    "4.4|CoverM MAG 丰度|4.4_coverm_MAG_abundance.sh"
+    "4.2|GTDB-Tk dRep MAG 注释|4.2_GTDB_HQ_annotation.sh"
+    "4.3|CoverM dRep MAG 丰度|4.3_coverm_MAG_abundance.sh"
     "5.1|Contig 基因预测(Prodigal)|5.1_contig_gene_predict.sh"
     "5.2|Contig 合并质量检查|5.2_contig_merge_quality_check.sh"
     "6.1|蛋白 CD-HIT 去冗余|6.1_contig_cdhit_protein.sh"
@@ -76,6 +74,16 @@ declare -a PIPELINE_STEPS=(
     "7.2|MAG eggNOG 注释|7.2_MAG_function_annotate.sh"
     "7.3|MAG × KO 丰度矩阵|7.3_MAG_KO_abundance_matrix.py"
     "7.4|MAG 加权功能丰度|7.4_MAG_weighted_function_abundance.py"
+    "8.1|Contig 蛋白 dbCAN CAZyme 注释|8.1_contig_protein_dbcan_annotation.sh"
+    "8.2|Contig CAZyme 丰度计算|8.2_contig_cazyme_abundance.py"
+    "8.3|dRep MAG dbCAN CAZyme 注释|8.3_MAG_dbcan_annotation.sh"
+    "8.4|dRep MAG × CAZyme 丰度矩阵|8.4_MAG_cazyme_abundance_matrix.py"
+    "8.5|dRep MAG 加权 CAZyme 丰度|8.5_MAG_weighted_cazyme_abundance.py"
+    "9.1|Contig 基因 CARD(RGI) 耐药注释|9.1_contig_gene_card_annotation.sh"
+    "9.2|Contig AMR 丰度计算|9.2_contig_amr_abundance.py"
+    "9.3|dRep MAG CARD(RGI) 耐药注释|9.3_MAG_card_annotation.sh"
+    "9.4|dRep MAG × AMR 丰度矩阵|9.4_MAG_amr_abundance_matrix.py"
+    "9.5|dRep MAG 加权 AMR 丰度|9.5_MAG_weighted_amr_abundance.py"
 )
 
 # 阶段分组
@@ -85,11 +93,13 @@ declare -A PHASE_STEPS=(
     [dehost]="1.1"
     [taxonomy]="2.1 2.2"
     [assembly]="3.1 3.2 3.3 3.4 3.5 3.6"
-    [binning]="3.7 3.8 3.9 3.10"
-    [mag]="4.1 4.2 4.3 4.4"
+    [binning]="3.7 3.8 3.9"
+    [mag]="4.1 4.2 4.3"
     [contig_function]="5.1 5.2 6.1 6.2 6.3 6.4 6.5 6.6 6.7 6.8 6.9"
     [mag_function]="7.1 7.2 7.3 7.4"
-    [function]="5.1 5.2 6.1 6.2 6.3 6.4 6.5 6.6 6.7 6.8 6.9 7.1 7.2 7.3 7.4"
+    [function]="5.1 5.2 6.1 6.2 6.3 6.4 6.5 6.6 6.7 6.8 6.9 7.1 7.2 7.3 7.4 8.1 8.2 8.3 8.4 8.5 9.1 9.2 9.3 9.4 9.5"
+    [cazyme]="8.1 8.2 8.3 8.4 8.5"
+    [card]="9.1 9.2 9.3 9.4 9.5"
 )
 
 get_step_script() {
@@ -117,7 +127,7 @@ list_steps() {
         printf "%-6s %s\n" "$id" "$desc"
     done
     echo ""
-    echo "阶段 (--phase): download | qc | dehost | taxonomy | assembly | binning | mag | contig_function | mag_function | function"
+    echo "阶段 (--phase): download | qc | dehost | taxonomy | assembly | binning | mag | contig_function | mag_function | function | cazyme | card"
 }
 
 run_single_step() {
@@ -152,7 +162,7 @@ run_single_step() {
 状态: 成功
 输出: ${PROJECT_ROOT}/bracken_merged"
             ;;
-        6.6|6.7|6.8|6.9|7.3|7.4)
+        6.6|6.7|6.8|6.9|7.3|7.4|8.2|8.4|8.5|9.2|9.4|9.5)
             activate_conda_env "${CONDA_ENV_MAIN}"
             python3 "$script"
             ;;
@@ -216,7 +226,9 @@ usage() {
   $0 --phase <name>                  运行某阶段
   $0 --all                           运行完整流程
 
-阶段名称: download, qc, dehost, taxonomy, assembly, binning, mag, contig_function, mag_function, function
+阶段名称: download, qc, dehost, taxonomy, assembly, binning, mag, contig_function, mag_function, function, cazyme, card
+
+--all 运行全部步骤（0.1–9.5）。
 
 项目根目录（任选其一）:
   export PROJECT_ROOT=/path/to/project

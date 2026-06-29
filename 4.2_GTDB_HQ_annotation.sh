@@ -1,5 +1,5 @@
 #!/bin/bash
-# 4.2 GTDB-Tk：dRep 去冗余后高质量 MAG 物种注释与系统发育树
+# 4.2 GTDB-Tk：dRep MAG 物种注释与系统发育树
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

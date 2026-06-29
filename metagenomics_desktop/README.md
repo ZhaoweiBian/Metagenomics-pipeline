@@ -90,8 +90,9 @@ pyinstaller --clean MetagenomicsPipeline.spec
 
 - 已部署本仓库 `script/` 目录（含 `run_pipeline.sh`）  
 - `metagenomics_desktop/remote_check_status.sh` 用于进度扫描（随仓库一起部署）  
-- conda 环境：`metagenomics`、`checkm2`、`gtdbtk-2.5.2`、`eggnog_env`  
+- conda 环境：`metagenomics`、`checkm2`、`gtdbtk-2.5.2`、`eggnog_env`、`dbcan_env`（cazyme）、`rgi_env`（card）  
 - 项目目录下有测序数据与 `samplelist`  
+- 数据库：`/data1/resource/dbcan_db`、`/data1/resource/card`（cazyme/card）  
 
 ## 配置保存位置
 

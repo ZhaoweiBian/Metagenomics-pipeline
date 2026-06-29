@@ -22,6 +22,14 @@ fi
 
 for MAG in "${mags[@]}"; do
     base=$(basename "$MAG" .fa)
+    prefixed_faa="${MAG_GENE_PRED_DIR}/${base}.prefixed.faa"
+    prefixed_ffn="${MAG_GENE_PRED_DIR}/${base}.prefixed.ffn"
+
+    if [[ -f "$prefixed_faa" && -f "$prefixed_ffn" ]]; then
+        log_info "已存在，跳过 Prodigal: $base"
+        continue
+    fi
+
     log_info "Prodigal: $base"
 
     prodigal -i "$MAG" \

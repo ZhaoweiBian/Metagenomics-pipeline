@@ -66,7 +66,7 @@ cmd_clear_results() {
 
     local -a remove_dirs=(
         assembly bracken bracken_merged contig_function coverm dehost
-        gtdbtk gtdbtk_mq kraken2 logs MAG_function qc raw
+        gtdbtk kraken2 logs MAG_function qc raw
     )
 
     log "将清空 $PROJECT_ROOT 下分析结果，保留: $(basename "$SAMPLE_LIST_KEEP")"
@@ -86,7 +86,7 @@ cmd_status() {
     echo ""
     ls -lh "$RAW_DATA_DIR"/*_{1,2}.fq.gz 2>/dev/null | awk '{print $9, $5}' | head -24 || echo "  (无 raw 文件)"
     echo ""
-    for d in assembly qc dehost contig_function MAG_function gtdbtk gtdbtk_mq coverm; do
+    for d in assembly qc dehost contig_function MAG_function gtdbtk coverm; do
         if [[ -d "${PROJECT_ROOT}/${d}" ]]; then
             echo "  ${d}: $(du -sh "${PROJECT_ROOT}/${d}" | cut -f1)"
         else

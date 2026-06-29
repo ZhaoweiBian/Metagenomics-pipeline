@@ -36,13 +36,11 @@ export BRACKEN_DIR="${BRACKEN_DIR:-${PROJECT_ROOT}/bracken}"
 # --- 组装与 MAG ---
 export ASSEMBLY_CONTIG_DIR="${ASSEMBLY_CONTIG_DIR:-${PROJECT_ROOT}/assembly/contig}"
 export HQ_MAG_DIR="${HQ_MAG_DIR:-${PROJECT_ROOT}/assembly/high_quality_bins}"
-export MQ_MAG_DIR="${MQ_MAG_DIR:-${PROJECT_ROOT}/assembly/medium_quality_bins}"
 export DREP_OUT_DIR="${DREP_OUT_DIR:-${PROJECT_ROOT}/assembly/drep/all_bins}"
 export DREP_MAG_DIR="${DREP_MAG_DIR:-${DREP_OUT_DIR}/dereplicated_genomes}"
 
-# --- GTDB-Tk 物种注释（4.2 HQ/dRep，4.3 全部中高质量 MAG）---
+# --- GTDB-Tk 物种注释（4.2 dRep MAG）---
 export GTDBTK_HQ_OUT_DIR="${GTDBTK_HQ_OUT_DIR:-${PROJECT_ROOT}/gtdbtk}"
-export GTDBTK_MQ_OUT_DIR="${GTDBTK_MQ_OUT_DIR:-${PROJECT_ROOT}/gtdbtk_mq}"
 export GTDBTK_OUT_DIR="${GTDBTK_OUT_DIR:-${GTDBTK_HQ_OUT_DIR}}"
 
 export COVERM_OUT_DIR="${COVERM_OUT_DIR:-${PROJECT_ROOT}/coverm}"
@@ -100,8 +98,6 @@ export BRACKEN_READLEN="${BRACKEN_READLEN:-150}"
 export MIN_CONTIG_BINNING="${MIN_CONTIG_BINNING:-1500}"
 export MAG_COMPLETENESS="${MAG_COMPLETENESS:-90}"
 export MAG_CONTAMINATION="${MAG_CONTAMINATION:-5}"
-export MAG_MQ_COMPLETENESS="${MAG_MQ_COMPLETENESS:-50}"
-export MAG_MQ_CONTAMINATION="${MAG_MQ_CONTAMINATION:-10}"
 
 # --- dRep 参数 ---
 export DREP_COMP="${DREP_COMP:-50}"
@@ -118,3 +114,15 @@ export CDHIT_MIN_GENE_LEN="${CDHIT_MIN_GENE_LEN:-150}"
 export ENABLE_EMAIL="${ENABLE_EMAIL=true}"
 export EMAIL_TO="${EMAIL_TO:-bzw02052021@163.com}"
 export EMAIL_FROM="${EMAIL_FROM:-13701213826@163.com}"
+
+# --- Phase 8/9: dbCAN CAZyme & CARD 耐药基因 ---
+export DBCAN_DB="${DBCAN_DB:-/data1/resource/dbcan_db}"
+export CARD_DB_DIR="${CARD_DB_DIR:-/data1/resource/card}"
+export CONDA_ENV_DBCAN="${CONDA_ENV_DBCAN:-dbcan_env}"
+export CONDA_ENV_RGI="${CONDA_ENV_RGI:-rgi_env}"
+export THREADS_DBCAN="${THREADS_DBCAN:-128}"
+export THREADS_RGI="${THREADS_RGI:-128}"
+export CONTIG_DBCAN_DIR="${CONTIG_DBCAN_DIR:-${GENE_QUANT_DIR}/protein_function/dbCAN}"
+export CONTIG_CARD_DIR="${CONTIG_CARD_DIR:-${GENE_QUANT_DIR}/gene_function/card}"
+export MAG_DBCAN_DIR="${MAG_DBCAN_DIR:-${MAG_FUNCTION_DIR}/dbcan_annotation}"
+export MAG_CARD_DIR="${MAG_CARD_DIR:-${MAG_FUNCTION_DIR}/card_annotation}"
