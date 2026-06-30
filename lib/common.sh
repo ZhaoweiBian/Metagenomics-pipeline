@@ -112,12 +112,71 @@ read_samples() {
     grep -v '^\s*$' "$list" | grep -v '^\s*#'
 }
 
-# 邮件通知
+# 邮件通知：统一附带步骤编号、项目、样本数等上下文
+_pipeline_resolve_step_id() {
+    if [[ -n "${PIPELINE_STEP_ID:-}" ]]; then
+        echo "$PIPELINE_STEP_ID"
+        return 0
+    fi
+    local script="${PIPELINE_SCRIPT_NAME:-}"
+    if [[ -z "$script" ]]; then
+        local i src
+        for i in 2 3 4 5; do
+            src="${BASH_SOURCE[$i]:-}"
+            [[ -z "$src" || "$src" == *common.sh ]] && continue
+            script=$(basename "$src")
+            break
+        done
+    fi
+    if [[ "$script" =~ ^([0-9]+\.[0-9]+)_ ]]; then
+        echo "${BASH_REMATCH[1]}"
+    fi
+}
+
+_pipeline_sample_count() {
+    local list="${SAMPLE_LIST:-}"
+    [[ -f "$list" ]] || { echo "N/A"; return; }
+    awk 'NF && $0 !~ /^#/' "$list" | wc -l
+}
+
+_notification_envelope() {
+    local step_id
+    step_id="$(_pipeline_resolve_step_id)"
+    local step_line="步骤: ${step_id:-未知}"
+    if [[ -n "${PIPELINE_STEP_DESC:-}" ]]; then
+        step_line="${step_line} ${PIPELINE_STEP_DESC}"
+    fi
+    printf '%s\n' \
+        "$step_line" \
+        "脚本: ${PIPELINE_SCRIPT_NAME:-未知}" \
+        "服务器: $(hostname)" \
+        "项目: ${PROJECT_ROOT:-未设置}" \
+        "样本数: $(_pipeline_sample_count)" \
+        "时间: $(date '+%Y-%m-%d %H:%M:%S')"
+    if [[ -n "${PIPELINE_MODE:-}" ]]; then
+        printf '运行模式: %s\n' "$PIPELINE_MODE"
+    fi
+    if [[ -n "${PIPELINE_PROGRESS:-}" ]]; then
+        printf '进度: %s\n' "$PIPELINE_PROGRESS"
+    fi
+}
+
 send_notification() {
     local subject="$1"
     local body="$2"
+    local step_id
+    step_id="$(_pipeline_resolve_step_id)"
+    local full_subject="$subject"
+    if [[ -n "$step_id" && "$subject" != *"[$step_id]"* ]]; then
+        full_subject="[${step_id}] ${subject}"
+    fi
+    local envelope
+    envelope="$(_notification_envelope)"
+    local full_body="${envelope}
+
+${body}"
     if [[ "${ENABLE_EMAIL}" == "true" ]] && command -v mail &>/dev/null; then
-        echo -e "$body" | mail -r "${EMAIL_FROM}" -s "$subject" -a "From: ${EMAIL_FROM}" "${EMAIL_TO}"
+        echo -e "$full_body" | mail -r "${EMAIL_FROM}" -s "$full_subject" -a "From: ${EMAIL_FROM}" "${EMAIL_TO}"
     fi
 }
 

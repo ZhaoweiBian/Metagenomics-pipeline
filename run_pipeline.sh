@@ -130,10 +130,26 @@ list_steps() {
     echo "阶段 (--phase): download | qc | dehost | taxonomy | assembly | binning | mag | contig_function | mag_function | function | cazyme | card"
 }
 
+get_step_description() {
+    local target="$1"
+    for entry in "${PIPELINE_STEPS[@]}"; do
+        IFS='|' read -r id desc script <<< "$entry"
+        if [[ "$id" == "$target" ]]; then
+            echo "$desc"
+            return 0
+        fi
+    done
+    echo ""
+}
+
 run_single_step() {
     local step_id="$1"
     local script
     script=$(get_step_script "$step_id") || { log_error "未知步骤: $step_id"; return 1; }
+
+    export PIPELINE_STEP_ID="$step_id"
+    export PIPELINE_STEP_DESC="$(get_step_description "$step_id")"
+    export PIPELINE_SCRIPT_NAME="$(basename "$script")"
 
     log_info "======== 执行步骤 ${step_id}: $(basename "$script") ========"
 
@@ -157,9 +173,7 @@ run_single_step() {
                     -l "$suffix"
             done
             send_notification "Bracken合并通知" \
-"脚本: 2.2_merge_new_reads.py
-服务器: $(hostname)
-状态: 成功
+"状态: 成功
 输出: ${PROJECT_ROOT}/bracken_merged"
             ;;
         6.6|6.7|6.8|6.9|7.3|7.4|8.2|8.4|8.5|9.2|9.4|9.5)
@@ -180,6 +194,7 @@ run_steps() {
 
     for step_id in "${steps[@]}"; do
         current=$((current + 1))
+        export PIPELINE_PROGRESS="${current}/${total}"
         log_info "进度: [${current}/${total}] 步骤 ${step_id}"
         if ! run_single_step "$step_id"; then
             log_error "步骤 ${step_id} 失败，Pipeline 中止"
@@ -265,6 +280,9 @@ fi
 
 log_info "Pipeline 启动 | 项目: ${PROJECT_ROOT}"
 
+export PIPELINE_MODE=""
+export PIPELINE_PROGRESS=""
+
 pipeline_start=$(date +%s)
 pipeline_status=0
 pipeline_mode=""
@@ -272,10 +290,12 @@ declare -a pipeline_steps=()
 
 if [[ -n "$STEP" ]]; then
     pipeline_mode="单步 ${STEP}"
+    export PIPELINE_MODE="$pipeline_mode"
     pipeline_steps=("$STEP")
     run_single_step "$STEP" || pipeline_status=$?
 elif [[ -n "$FROM" && -n "$TO" ]]; then
     pipeline_mode="区间 ${FROM}-${TO}"
+    export PIPELINE_MODE="$pipeline_mode"
     # shellcheck disable=SC2206
     pipeline_steps=($(get_steps_in_range "$FROM" "$TO"))
     run_steps "${pipeline_steps[@]}" || pipeline_status=$?
@@ -285,11 +305,13 @@ elif [[ -n "$PHASE" ]]; then
         exit 1
     fi
     pipeline_mode="阶段 ${PHASE}"
+    export PIPELINE_MODE="$pipeline_mode"
     # shellcheck disable=SC2206
     pipeline_steps=(${PHASE_STEPS[$PHASE]})
     run_steps "${pipeline_steps[@]}" || pipeline_status=$?
 elif $RUN_ALL; then
     pipeline_mode="完整流程"
+    export PIPELINE_MODE="$pipeline_mode"
     # shellcheck disable=SC2206
     pipeline_steps=($(get_all_steps))
     run_steps "${pipeline_steps[@]}" || pipeline_status=$?
@@ -307,13 +329,21 @@ else
     pipeline_result="失败"
 fi
 
+unset PIPELINE_STEP_ID PIPELINE_STEP_DESC PIPELINE_SCRIPT_NAME PIPELINE_PROGRESS
+export PIPELINE_STEP_ID="总控"
+export PIPELINE_STEP_DESC="Pipeline 主控"
+export PIPELINE_SCRIPT_NAME="run_pipeline.sh"
+
+pipeline_steps_list=$(IFS=,; echo "${pipeline_steps[*]}")
+
 send_notification "Pipeline总控通知" \
-"脚本: run_pipeline.sh
-服务器: $(hostname)
+"状态: ${pipeline_result}
 模式: ${pipeline_mode}
-状态: ${pipeline_result}
+步骤: ${pipeline_steps_list}
 步骤数: ${#pipeline_steps[@]}
 耗时: ${pipeline_runtime}
 项目: ${PROJECT_ROOT}"
+
+unset PIPELINE_STEP_ID PIPELINE_STEP_DESC PIPELINE_SCRIPT_NAME PIPELINE_MODE
 
 exit $pipeline_status
